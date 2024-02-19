@@ -14,8 +14,8 @@ COPY go.sum ./
 COPY . .
 
 # 애플리케이션 빌드
-RUN go build -o main .
+RUN go build -o /main .
 
 # 애플리케이션 실행
-CMD ["/app/main"]
+CMD ["/main"]
 
