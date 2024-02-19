@@ -17,5 +17,5 @@ COPY . .
 RUN go build -o main .
 
 # 애플리케이션 실행
-CMD ["./main"]
+CMD ["/app/main"]
 
