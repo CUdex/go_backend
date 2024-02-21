@@ -1,5 +1,15 @@
 package main
-import "fmt"
+
+import (
+	"net/http"
+	"tag-controller/logger"
+	"tag-controller/aws_api"
+)
+
 func main() {
-	fmt.Println("Hello, Docker!")
+    mux := http.NewServeMux()
+    mux.HandleFunc("/ins", aws_api.InstanceHandler)
+
+	logger.Info("start Server2")
+    http.ListenAndServe(":4040", mux)
 }
