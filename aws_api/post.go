@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"encoding/json"
 	"tag-controller/logger"
+    "tag-controller/prom"
     "github.com/aws/aws-sdk-go-v2/config"
     "github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
@@ -16,6 +17,8 @@ func TagAddHandler(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Only PUT method is allowed", http.StatusMethodNotAllowed)
         return
     }
+    //prometheus Counter 추가
+    prom.PutRequestCounter.WithLabelValues(r.URL.Path).Inc()
 
 	// request body 값이 정의한 구조체와 다를 경우 Bad Request 반환
 	var req TagRequest
@@ -38,7 +41,6 @@ func TagAddHandler(w http.ResponseWriter, r *http.Request) {
 	} 
 	
 	http.Error(w, "Error Bad Request Tag Key", http.StatusBadRequest)
-	return   
 }
 
 func updateEC2Tags(tagInfo TagRequest) error {

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"encoding/json"
 	"tag-controller/logger"
+    "tag-controller/prom"
     "github.com/aws/aws-sdk-go-v2/config"
     "github.com/aws/aws-sdk-go-v2/service/ec2"
 )
@@ -14,6 +15,7 @@ func TagGetHandler(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Only GET method is allowed", http.StatusMethodNotAllowed)
         return
     }
+    prom.GetRequestCounter.WithLabelValues(r.URL.Path).Inc()
 
 	// instance list와 tag 조회
 	instances, err := getInstances()

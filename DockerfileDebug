@@ -1,0 +1,30 @@
+# 기본 이미지 설정
+FROM golang:1.22.0 AS builder
+
+# Delve 설치
+RUN go install github.com/go-delve/delve/cmd/dlv@latest
+
+# 작업 디렉토리 설정
+WORKDIR /go/src
+
+# 소스 코드 및 종속성 복사
+COPY . .
+RUN go mod download
+
+# 애플리케이션 빌드 (디버그 모드)
+RUN go build -gcflags="all=-N -l" -o /test .
+
+# 디버그용 최종 이미지
+FROM golang:1.22.0
+
+# Delve 복사
+COPY --from=builder /go/bin/dlv /bin/dlv
+
+# 애플리케이션 복사
+COPY --from=builder /test /test
+
+# 작업 디렉토리 설정
+WORKDIR /
+
+# 디버거 실행
+CMD ["/bin/dlv", "--listen=:2345", "--headless=true", "--api-version=2", "exec", "./main"]
